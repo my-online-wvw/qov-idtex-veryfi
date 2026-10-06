@@ -2,10 +2,10 @@
 <html lang="bn">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>ভূমি উন্নয়ন কর - রসিদ যাচাই</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <style>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+        <title>ভূমি উন্নয়ন কর - রসিদ যাচাই</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <style>
       * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'SolaimanLipi', Arial, sans-serif; }
       body { background-color: #ffffff; min-height: 100vh; overflow-x: hidden; }
 
@@ -93,46 +93,49 @@
         .receipt-img { filter: none; mix-blend-mode: normal; }
       }
     </style>
-  </head>
-  <body>
-    <!-- Controls Area (Only Print Button) -->
-    <div class="action-toolbar no-print">
-      <button class="btn" onclick="window.print()">🖨️ প্রিন্ট</button>
-    </div>
-    <!-- Government Website Top Section -->
-    <div class="top-banner" id="live-date">
-    </div>
-    <div class="navbar">
-      <div class="brand-section">
-        <div class="logo-box">৳</div>
-        <div class="brand-title" id="brandTitle">ভূমি উন্নয়ন কর</div>
-      </div>
-      <div class="nav-controls">
-        <div class="lang-toggle">
-          <span class="lang-btn active" id="btnBn" onclick="setLanguage('bn')">বাং</span>
-          <span class="lang-btn inactive" id="btnEn" onclick="setLanguage('en')">EN</span>
+      </head>
+      <body>
+        <!-- Controls Area (Only Print Button) -->
+        <div class="action-toolbar no-print">
+          <button class="btn" onclick="window.print()">🖨️ প্রিন্ট</button>
         </div>
-        <button class="login-btn" id="loginText">
-          লগইন <span>▼</span>
-        </button>
-      </div>
-    </div>
-    <div class="menu-bar">
-      <div class="hamburger-icon">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-    <!-- Smooth Horizontal Scrolling Container -->
-    <div class="receipt-wrapper">
-      <div class="receipt-paper" id="receipt">
-        <!-- ডায়নামিক রসিদ ছবি এখানে লোড হবে -->
-      </div>
-    </div>
-    <div class="footer-gradient">
-    </div>
-    <script>
+        <!-- Government Website Top Section -->
+        <div class="top-banner" id="live-date">
+        </div>
+        <div class="navbar">
+          <div class="brand-section">
+            <div class="logo-box">৳</div>
+            <div class="brand-title" id="brandTitle">ভূমি উন্নয়ন কর</div>
+          </div>
+          <div class="nav-controls">
+            <div class="lang-toggle">
+              <span class="lang-btn active" id="btnBn" onclick="setLanguage('bn')">বাং</span>
+              <span class="lang-btn inactive" id="btnEn" onclick="setLanguage('en')">EN</span>
+            </div>
+            <button class="login-btn" id="loginText">
+              লগইন <span>▼</span>
+            </button>
+          </div>
+        </div>
+        <div class="menu-bar">
+          <div class="hamburger-icon">
+            <span>
+            </span>
+            <span>
+            </span>
+            <span>
+            </span>
+          </div>
+        </div>
+        <!-- Smooth Horizontal Scrolling Container -->
+        <div class="receipt-wrapper">
+          <div class="receipt-paper" id="receipt">
+            <!-- ডায়নামিক রসিদ ছবি এখানে লোড হবে -->
+          </div>
+        </div>
+        <div class="footer-gradient">
+        </div>
+        <script>
     // সংখ্যাকে বাংলায় রূপান্তর করার ফাংশন
     function toBanglaNum(num) {
       const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
@@ -255,22 +258,59 @@
           requestedFile = `${requestedFile}.jpg`;
         }
       }
-      
-      const fileUrl = `receipts/${requestedFile}`;
-      receiptBox.innerHTML = `<img src="${fileUrl}" alt="Land Tax Receipt" class="receipt-img" id="receiptImg">`;
-      
-      setTimeout(() => {
-        const imgElement = document.getElementById('receiptImg');
-        if (imgElement) {
-          imgElement.onerror = function() {
-            receiptBox.innerHTML = `<div class="error-msg">⚠️ রসিদ পাওয়া যায়নি / Receipt not found<br><br><small>${requestedFile}</small></div>`;
-          };
-        }
-      }, 100);
 
-    } else {
+      // QR / URL থেকে ফাইলের নাম নিয়ে সম্ভাব্য ছবির নামগুলো চেষ্টা করা হবে।
+      const candidates = [];
+
+      if (/^dakhila-\d+\.(jpg|jpeg|png)$/i.test(requestedFile)) {
+        const base = requestedFile.replace(/\.(jpg|jpeg|png)$/i, '');
+        candidates.push(`receipts/${base}.jpg`, `receipts/${base}.jpeg`, `receipts/${base}.png`);
+      } else if (/^dakhila-\d+$/i.test(requestedFile)) {
+        candidates.push(`receipts/${requestedFile}.jpg`, `receipts/${requestedFile}.jpeg`, `receipts/${requestedFile}.png`);
+      } else if (/^\d+$/.test(requestedFile)) {
+        candidates.push(
+          `receipts/dakhila-${requestedFile}.jpg`,
+          `receipts/dakhila-${requestedFile}.jpeg`,
+          `receipts/dakhila-${requestedFile}.png`,
+          `receipts/${requestedFile}.jpg`,
+          `receipts/${requestedFile}.jpeg`,
+          `receipts/${requestedFile}.png`
+        );
+      } else {
+        const base = requestedFile.replace(/\.(jpg|jpeg|png)$/i, '');
+        candidates.push(`receipts/${base}.jpg`, `receipts/${base}.jpeg`, `receipts/${base}.png`);
+      }
+
+      let tryIndex = 0;
+      function tryNextReceipt() {
+        if (tryIndex >= candidates.length) {
+          receiptBox.innerHTML = `<div class="error-msg">
+            ⚠️ রসিদ পাওয়া যায়নি / Receipt not found
+            <br><br><small>চেষ্টা করা হয়েছে: ${candidates.join(' , ')}</small>
+            <br><br><small>সংশ্লিষ্ট ছবি receipts ফোল্ডারের ভিতরে আপলোড করা আছে কিনা দেখুন।</small>
+          </div>`;
+          return;
+        }
+
+        const img = new Image();
+        img.className = 'receipt-img';
+        img.alt = 'Land Tax Receipt';
+        img.id = 'receiptImg';
+        img.onload = function() {
+          receiptBox.innerHTML = '';
+          receiptBox.appendChild(img);
+        };
+        img.onerror = function() {
+          tryIndex++;
+          tryNextReceipt();
+        };
+        img.src = candidates[tryIndex++];
+      }
+
+      tryNextReceipt();
+} else {
       receiptBox.innerHTML = `<div class="error-msg">⚠️ দুঃখিত, কোনো রসিদ পাওয়া যায়নি। সঠিক লিংক ব্যবহার করুন (যেমন: ?file=1 বা ?file=dakhila-102)।</div>`;
     }
   </script>
-  </body>
-</html>
+      </body>
+    </html>
